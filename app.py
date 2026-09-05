@@ -1,34 +1,29 @@
-from flask import Flask
-import datetime, platform
+import os
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
+# Biến đếm toàn cục lưu trong RAM
+counter_value = 0
+
+
 @app.route("/")
 def home():
-    return f"""
-    <html><head><meta charset="utf-8"><title>Flask PaaS Demo</title>
-    <style>
-    body {{ font-family: Arial; max-width: 640px; margin: 60px auto; }}
-    .box {{ background:#DEEAF1; border-left: 5px solid #1F4E79; padding: 24px; border-radius: 8px; }}
-    h1 {{ color: #1F4E79; }}
-    .v2 {{ color: #27ae60; font-weight: bold; }}
-    </style></head><body>
-    <h1>Ung dung Flask tren PaaS - Phien ban 2!</h1>
-    <div class="box">
-    <p><b>Sinh vien:</b> NGUYEN THI YEN NHI - 233404050197</p>
-    <p><b>Mon hoc:</b> Dien toan Dam may </p>
-    <p><b>Mo hinh:</b> PaaS - Platform as a Service</p>
-    <p><b>Python:</b> {platform.python_version()}</p>
-    <p><b>Thoi gian server:</b> {datetime.datetime.now()}</p>
-    <p class="v2">Trang thai: Auto-deploy v2 thanh cong!</p>
-    </div>
-    <p>Developer chi viet code - PaaS lo build, deploy, HTTPS, scaling!</p>
-    </body></html>
-    """
+    return "Flask App running on Render PaaS!"
 
-@app.route("/health")
-def health():
-    return {"status": "ok"}
+
+@app.route("/api/counter")
+def counter():
+    global counter_value
+    counter_value += 1
+    return jsonify({"counter": counter_value})
+
+
+@app.route("/api/info")
+def info():
+    student_name = os.environ.get("STUDENT_NAME", "Default Name")
+    return jsonify({"student_name": student_name})
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
